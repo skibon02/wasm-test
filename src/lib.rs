@@ -123,7 +123,7 @@ impl Universe {
 
 
     pub async fn tick(&mut self) {
-        // let pkg_js = "./wasm_game_of_life.js"; // path to `wasm-bindgen`'s JS binding
+        // let pkg_js = "../../pkg/wasm_game_of_life.js"; // path to `wasm-bindgen`'s JS binding
         // let mt = WasmMt::new(pkg_js).and_init().await.unwrap();
         //
         // let th = mt.thread().and_init().await.unwrap();
@@ -248,4 +248,20 @@ impl fmt::Display for Universe {
         Ok(())
     }
 }
+// Called when the wasm module is instantiated
+#[wasm_bindgen(start)]
+fn main() -> Result<(), JsValue> {
+    // Use `web_sys`'s global `window` function to get a handle on the global
+    // window object.
+    let window = web_sys::window().expect("no global `window` exists");
+    let document = window.document().expect("should have a document on window");
+    let body = document.body().expect("document should have a body");
 
+    // Manufacture the element we're gonna append
+    let val = document.create_element("p")?;
+    val.set_inner_html("Hello from Rust!");
+
+    body.append_child(&val)?;
+
+    Ok(())
+}
